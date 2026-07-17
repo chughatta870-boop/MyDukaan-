@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>MyDukaan — by M Ijaz</title>
+<meta name="description" content="MyDukaan — Multi Seller Ecommerce App by M Ijaz" />
+<meta name="theme-color" content="#0F5257" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icon-192.png" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<noscript>آپ کو یہ App چلانے کے لیے JavaScript enable کرنا ہوگی۔</noscript>
+
+<!-- ===================== AUTH SCREEN ===================== -->
+<section id="authScreen" class="auth-screen hidden">
+  <div class="auth-card">
+    <div class="stall-badge">
+      <svg viewBox="0 0 64 64" width="34" height="34"><path fill="currentColor" d="M8 20 L14 8 H50 L56 20 Z M8 20 V52 H56 V20 M20 52 V34 H44 V52" stroke="currentColor" stroke-width="3" fill="none" stroke-linejoin="round"/></svg>
+    </div>
+    <h1 class="brand">MyDukaan</h1>
+    <p class="brand-tag">Apni dukaan, apne daam — by M Ijaz</p>
+
+    <div class="auth-tabs">
+      <button id="tabLogin" class="auth-tab active" type="button">Login</button>
+      <button id="tabSignup" class="auth-tab" type="button">Sign Up</button>
+    </div>
+
+    <form id="authForm" class="auth-form">
+      <label class="field">
+        <span>Email</span>
+        <input id="authEmail" type="email" required autocomplete="email" placeholder="you@example.com" />
+      </label>
+      <label class="field">
+        <span>Password</span>
+        <input id="authPass" type="password" required autocomplete="current-password" minlength="6" placeholder="At least 6 characters" />
+      </label>
+      <p id="authError" class="error-text hidden"></p>
+      <button type="submit" id="authSubmit" class="btn btn-primary btn-block">Login</button>
+    </form>
+  </div>
+</section>
+
+<!-- ===================== APP SHELL ===================== -->
+<div id="appShell" class="app-shell hidden">
+
+  <header class="topbar">
+    <div class="topbar-brand">
+      <span class="stall-badge small">
+        <svg viewBox="0 0 64 64" width="20" height="20"><path fill="currentColor" d="M8 20 L14 8 H50 L56 20 Z M8 20 V52 H56 V20 M20 52 V34 H44 V52" stroke="currentColor" stroke-width="3" fill="none" stroke-linejoin="round"/></svg>
+      </span>
+      <div>
+        <div class="brand-sm">MyDukaan</div>
+        <div class="brand-by">by M Ijaz</div>
+      </div>
+    </div>
+    <button id="logoutBtn" class="btn btn-ghost btn-sm" type="button">Logout</button>
+  </header>
+
+  <main id="pageHost" class="page-host">
+
+    <!-- SELLER: MY CATALOG -->
+    <section id="page-seller" class="page">
+      <h2 class="page-title">My Catalog</h2>
+      <form id="itemForm" class="item-form card">
+        <h3 id="itemFormTitle" class="form-heading">Add New Item</h3>
+        <label class="field">
+          <span>Item name</span>
+          <input id="itemName" type="text" required placeholder="e.g. Handmade Dupatta" />
+        </label>
+        <label class="field">
+          <span>Price (Rs)</span>
+          <input id="itemPrice" type="number" min="0" step="1" required placeholder="e.g. 1200" />
+        </label>
+        <label class="field">
+          <span>Photo</span>
+          <input id="itemImage" type="file" accept="image/*" />
+        </label>
+        <div id="itemImgPreviewWrap" class="img-preview-wrap hidden">
+          <img id="itemImgPreview" alt="preview" />
+        </div>
+        <div class="form-actions">
+          <button type="submit" id="itemSubmitBtn" class="btn btn-primary">Add Item</button>
+          <button type="button" id="itemCancelEdit" class="btn btn-ghost hidden">Cancel</button>
+        </div>
+      </form>
+
+      <h3 class="section-heading">My Items</h3>
+      <div id="myItemsGrid" class="grid"></div>
+      <p id="myItemsEmpty" class="empty-text hidden">Abhi tak koi item add nahi hua. Upar se add karein.</p>
+    </section>
+
+    <!-- CUSTOMER: BAZAAR -->
+    <section id="page-bazaar" class="page hidden">
+      <h2 class="page-title">Bazaar</h2>
+      <label class="field search-field">
+        <span>Search</span>
+        <input id="bazaarSearch" type="text" placeholder="Item dhoondein..." />
+      </label>
+      <div id="bazaarGrid" class="grid"></div>
+      <p id="bazaarEmpty" class="empty-text hidden">Koi item nahi mila.</p>
+    </section>
+
+    <!-- CART -->
+    <section id="page-cart" class="page hidden">
+      <h2 class="page-title">Cart</h2>
+      <div id="cartList" class="cart-list"></div>
+      <p id="cartEmpty" class="empty-text hidden">Cart khali hai. Bazaar se items add karein.</p>
+
+      <div id="cartSummary" class="card cart-summary hidden">
+        <div class="cart-total-row">
+          <span>Total</span>
+          <strong id="cartTotal">Rs 0</strong>
+        </div>
+        <p class="cart-seller-note" id="cartSellerNote"></p>
+
+        <h4 class="section-heading tight">Full Payment</h4>
+        <div class="pay-btn-row">
+          <button class="btn btn-outline" data-pay="Cash on Delivery" data-half="0">Cash on Delivery</button>
+          <button class="btn btn-outline" data-pay="JazzCash" data-half="0">JazzCash</button>
+          <button class="btn btn-outline" data-pay="Easypaisa" data-half="0">Easypaisa</button>
+          <button class="btn btn-outline" data-pay="Bank Transfer" data-half="0">Bank Transfer</button>
+        </div>
+
+        <h4 class="section-heading tight">50% Advance</h4>
+        <div class="pay-btn-row">
+          <button class="btn btn-outline" data-pay="JazzCash" data-half="1">50% JazzCash</button>
+          <button class="btn btn-outline" data-pay="Easypaisa" data-half="1">50% Easypaisa</button>
+        </div>
+
+        <div class="payment-info">
+          <p><strong>JazzCash:</strong> <span id="infoJazzCash"></span></p>
+          <p><strong>Easypaisa:</strong> <span id="infoEasypaisa"></span></p>
+          <p><strong>Bank:</strong> <span id="infoBank"></span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ORDERS -->
+    <section id="page-orders" class="page hidden">
+      <h2 class="page-title">Orders</h2>
+      <div class="orders-tabs">
+        <button id="ordersTabReceived" class="chip active" type="button">Received (Seller)</button>
+        <button id="ordersTabPlaced" class="chip" type="button">My Orders (Buyer)</button>
+      </div>
+      <div id="ordersList" class="orders-list"></div>
+      <p id="ordersEmpty" class="empty-text hidden">Abhi koi order nahi hai.</p>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-page="seller" type="button">
+      <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M4 10 L6 4 H18 L20 10 M4 10 V20 H20 V10 M9 20 V14 H15 V20" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>
+      <span>Catalog</span>
+    </button>
+    <button class="nav-btn" data-page="bazaar" type="button">
+      <svg viewBox="0 0 24 24" width="20" height="20"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none"/><line x1="20" y1="20" x2="16.5" y2="16.5" stroke="currentColor" stroke-width="2"/></svg>
+      <span>Bazaar</span>
+    </button>
+    <button class="nav-btn" data-page="cart" type="button">
+      <svg viewBox="0 0 24 24" width="20" height="20"><path fill="none" stroke="currentColor" stroke-width="2" d="M3 4h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="9" cy="20" r="1.4" fill="currentColor"/><circle cx="18" cy="20" r="1.4" fill="currentColor"/></svg>
+      <span>Cart</span>
+      <span id="cartBadge" class="badge hidden">0</span>
+    </button>
+    <button class="nav-btn" data-page="orders" type="button">
+      <svg viewBox="0 0 24 24" width="20" height="20"><rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M8 9h8M8 13h8M8 17h5" stroke="currentColor" stroke-width="2"/></svg>
+      <span>Orders</span>
+    </button>
+  </nav>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+<div id="loadingOverlay" class="loading-overlay hidden"><div class="spinner"></div></div>
+
+<!-- Firebase (compat SDK, no build step needed) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

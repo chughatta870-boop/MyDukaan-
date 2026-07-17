@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ITEMS: anyone signed-in can read (bazaar browsing).
+    // Only the owning seller can create/edit/delete their own items.
+    match /items/{itemId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+                    && request.resource.data.sellerId == request.auth.uid;
+      allow update, delete: if request.auth != null
+                    && resource.data.sellerId == request.auth.uid;
+    }
+
+    // ORDERS: buyer or the order's seller can read.
+    // Only the buyer can create an order for themselves.
+    // Only the order's seller can update it (status changes),
+    // and only status may change — not who/what was ordered.
+    match /orders/{orderId} {
+      allow read: if request.auth != null &&
+                  (resource.data.customerId == request.auth.uid ||
+                   resource.data.sellerId == request.auth.uid);
+      allow create: if request.auth != null
+                    && request.resource.data.customerId == request.auth.uid;
+      allow update: if request.auth != null
+                    && resource.data.sellerId == request.auth.uid
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
+      allow delete: if false;
+    }
+  }
+}
